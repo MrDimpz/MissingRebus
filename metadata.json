@@ -1,0 +1,6 @@
+{
+  "name": "Puzzle a Day: Rebus Challenge Archive",
+  "description": "Interactive web-based rebus puzzle game featuring all 733 rebus challenges, clues, progressive hints, and explanations from Puzzle a Day.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
