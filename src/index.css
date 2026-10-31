@@ -7,17 +7,75 @@
     --font-display: 'Fraunces', Georgia, serif;
     --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
+
+    /* Default: Logo Theme (Royal Purple & Metallic Gold from "The Missing Piece" Logo) - Light */
+    --bg-canvas: #F6F4FA;
+    --bg-card: #FFFFFF;
+    --bg-subtle: #F2EEF8;
+    --border-card: #E2DCEB;
+    --brand-primary: #4A1259;
+    --brand-primary-hover: #360B42;
+    --brand-accent: #B45309;
+    --brand-gold: #EAB308;
+    --brand-text: #4A1259;
+    --brand-soft-bg: rgba(74, 18, 89, 0.06);
+    --brand-soft-border: rgba(74, 18, 89, 0.30);
+  }
+
+  html.dark {
+    /* Default: Logo Theme (Royal Purple & Metallic Gold) - Dark */
+    --bg-canvas: #11081A;
+    --bg-card: #1B0E26;
+    --bg-subtle: #13091D;
+    --border-card: #331C4A;
+    --brand-primary: #6B21A8;
+    --brand-primary-hover: #581C87;
+    --brand-accent: #F5C427;
+    --brand-gold: #F5C427;
+    --brand-text: #F5C427;
+    --brand-soft-bg: rgba(245, 196, 39, 0.10);
+    --brand-soft-border: rgba(245, 196, 39, 0.40);
+  }
+
+  html.theme-classic {
+    /* Classic Theme (Forest Emerald & Warm Alabaster) - Light */
+    --bg-canvas: #F7F6F2;
+    --bg-card: #FFFFFF;
+    --bg-subtle: #FAF9F5;
+    --border-card: #E7E5E4;
+    --brand-primary: #0F5132;
+    --brand-primary-hover: #0B3D26;
+    --brand-accent: #0F5132;
+    --brand-gold: #0F5132;
+    --brand-text: #0F5132;
+    --brand-soft-bg: rgba(15, 81, 50, 0.05);
+    --brand-soft-border: rgba(15, 81, 50, 0.30);
+  }
+
+  html.dark.theme-classic {
+    /* Classic Theme - Dark */
+    --bg-canvas: #0E1015;
+    --bg-card: #18181B;
+    --bg-subtle: #09090B;
+    --border-card: #27272A;
+    --brand-primary: #0F5132;
+    --brand-primary-hover: #0B3D26;
+    --brand-accent: #34D399;
+    --brand-gold: #34D399;
+    --brand-text: #34D399;
+    --brand-soft-bg: rgba(16, 185, 129, 0.12);
+    --brand-soft-border: rgba(16, 185, 129, 0.40);
   }
 
   body {
     font-family: var(--font-sans);
-    background-color: #F7F6F2;
+    background-color: var(--bg-canvas);
     color: #18181B;
     transition: background-color 150ms ease, color 150ms ease;
   }
 
   html.dark body {
-    background-color: #0E1015;
+    background-color: var(--bg-canvas);
     color: #F4F4F5;
   }
 

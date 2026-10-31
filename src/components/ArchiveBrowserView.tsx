@@ -1,14 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { Search, CheckCircle2, Bookmark, ArrowUpRight, Eye } from 'lucide-react';
+import { Search, CheckCircle2, ArrowUpRight, Eye } from 'lucide-react';
 import { RebusChallenge } from '../data/rebusData';
 
 interface ArchiveBrowserViewProps {
   puzzles: RebusChallenge[];
   solvedIds: Record<string, boolean>;
   revealedIds: Record<string, boolean>;
-  bookmarkedIds: Record<string, boolean>;
   onSelectPuzzle: (puzzleId: string) => void;
-  onToggleBookmark: (puzzleId: string) => void;
 }
 
 const CATEGORIES = [
@@ -34,14 +32,12 @@ export const ArchiveBrowserView: React.FC<ArchiveBrowserViewProps> = ({
   puzzles,
   solvedIds,
   revealedIds,
-  bookmarkedIds,
   onSelectPuzzle,
-  onToggleBookmark,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('All');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'unsolved' | 'solved' | 'bookmarked'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'unsolved' | 'solved'>('all');
   const [page, setPage] = useState(1);
   const pageSize = 24;
 
@@ -52,7 +48,6 @@ export const ArchiveBrowserView: React.FC<ArchiveBrowserViewProps> = ({
       if (selectedDifficulty !== 'All' && p.difficulty !== selectedDifficulty) return false;
       if (statusFilter === 'solved' && !solvedIds[p.id]) return false;
       if (statusFilter === 'unsolved' && solvedIds[p.id]) return false;
-      if (statusFilter === 'bookmarked' && !bookmarkedIds[p.id]) return false;
 
       if (q) {
         const inTitle = p.title.toLowerCase().includes(q);
@@ -60,12 +55,13 @@ export const ArchiveBrowserView: React.FC<ArchiveBrowserViewProps> = ({
         const inId = String(p.postId).includes(q);
         const inCat = p.category.toLowerCase().includes(q);
         const inClue = p.blogClue.toLowerCase().includes(q);
-        const inSolvedAns = (solvedIds[p.id] || revealedIds[p.id]) && p.answer.toLowerCase().includes(q);
+        const inSolvedAns =
+          (solvedIds[p.id] || revealedIds[p.id]) && p.answer.toLowerCase().includes(q);
         if (!inTitle && !inDate && !inId && !inCat && !inClue && !inSolvedAns) return false;
       }
       return true;
     });
-  }, [puzzles, searchQuery, selectedCategory, selectedDifficulty, statusFilter, solvedIds, revealedIds, bookmarkedIds]);
+  }, [puzzles, searchQuery, selectedCategory, selectedDifficulty, statusFilter, solvedIds, revealedIds]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const currentPage = Math.min(page, totalPages);
@@ -74,7 +70,7 @@ export const ArchiveBrowserView: React.FC<ArchiveBrowserViewProps> = ({
   return (
     <div className="space-y-6">
       {/* Filter & Search Control Panel */}
-      <div className="bg-white dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800 rounded-xl p-5 space-y-4">
+      <div className="bg-[var(--bg-card)] border border-[var(--border-card)] rounded-xl p-5 space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="text-xs text-stone-500 dark:text-zinc-400">
@@ -98,20 +94,19 @@ export const ArchiveBrowserView: React.FC<ArchiveBrowserViewProps> = ({
                 setPage(1);
               }}
               placeholder="Search Rebus Puzzle #1, #2, category, clue..."
-              className="w-full pl-9 pr-4 py-2 text-sm bg-[#FAF9F5] dark:bg-zinc-950 border border-stone-300 dark:border-zinc-700 rounded-lg text-stone-900 dark:text-zinc-100 placeholder:text-stone-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#0F5132]"
+              className="w-full pl-9 pr-4 py-2 text-sm bg-[var(--bg-subtle)] border border-[var(--border-card)] rounded-lg text-stone-900 dark:text-zinc-100 placeholder:text-stone-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
             />
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-stone-100 dark:border-zinc-800">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-[var(--border-card)]">
           {/* Status Segmented Control */}
-          <div className="flex items-center gap-1 p-1 bg-stone-100 dark:bg-zinc-950 rounded-lg">
+          <div className="grid grid-cols-3 sm:flex items-center gap-1 p-1 bg-[var(--bg-subtle)] rounded-lg">
             {(
               [
-                { id: 'all', label: 'All Challenges' },
+                { id: 'all', label: 'All' },
                 { id: 'unsolved', label: 'Unsolved' },
                 { id: 'solved', label: 'Solved' },
-                { id: 'bookmarked', label: 'Bookmarked' },
               ] as const
             ).map((tab) => (
               <button
@@ -121,9 +116,9 @@ export const ArchiveBrowserView: React.FC<ArchiveBrowserViewProps> = ({
                   setStatusFilter(tab.id);
                   setPage(1);
                 }}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors cursor-pointer whitespace-nowrap truncate ${
                   statusFilter === tab.id
-                    ? 'bg-white dark:bg-zinc-800 text-stone-900 dark:text-zinc-100 shadow-xs'
+                    ? 'bg-[var(--brand-primary)] text-white shadow-xs'
                     : 'text-stone-600 dark:text-zinc-400 hover:text-stone-900 dark:hover:text-zinc-200'
                 }`}
               >
@@ -132,7 +127,7 @@ export const ArchiveBrowserView: React.FC<ArchiveBrowserViewProps> = ({
             ))}
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2.5">
             <select
               aria-label="Filter by category"
               value={selectedCategory}
@@ -140,7 +135,7 @@ export const ArchiveBrowserView: React.FC<ArchiveBrowserViewProps> = ({
                 setSelectedCategory(e.target.value);
                 setPage(1);
               }}
-              className="px-3 py-1.5 text-xs font-medium bg-[#FAF9F5] dark:bg-zinc-950 border border-stone-300 dark:border-zinc-700 rounded-lg text-stone-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#0F5132]"
+              className="flex-1 xs:flex-initial min-w-0 h-9 px-3 py-1 text-xs font-medium leading-normal bg-[var(--bg-subtle)] border border-[var(--border-card)] rounded-lg text-stone-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
             >
               {CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
@@ -156,7 +151,7 @@ export const ArchiveBrowserView: React.FC<ArchiveBrowserViewProps> = ({
                 setSelectedDifficulty(e.target.value);
                 setPage(1);
               }}
-              className="px-3 py-1.5 text-xs font-medium bg-[#FAF9F5] dark:bg-zinc-950 border border-stone-300 dark:border-zinc-700 rounded-lg text-stone-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-[#0F5132]"
+              className="h-9 px-3 py-1 text-xs font-medium leading-normal bg-[var(--bg-subtle)] border border-[var(--border-card)] rounded-lg text-stone-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
             >
               <option value="All">All Difficulties</option>
               <option value="Standard">Standard</option>
@@ -169,7 +164,7 @@ export const ArchiveBrowserView: React.FC<ArchiveBrowserViewProps> = ({
 
       {/* Challenge Cards Grid */}
       {visibleItems.length === 0 ? (
-        <div className="bg-white dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800 rounded-xl p-12 text-center space-y-3">
+        <div className="bg-[var(--bg-card)] border border-[var(--border-card)] rounded-xl p-12 text-center space-y-3">
           <p className="font-display text-xl text-stone-800 dark:text-zinc-200">
             No matching rebus challenges found
           </p>
@@ -185,7 +180,7 @@ export const ArchiveBrowserView: React.FC<ArchiveBrowserViewProps> = ({
               setStatusFilter('all');
               setPage(1);
             }}
-            className="px-4 py-2 text-xs font-semibold text-white bg-[#0F5132] rounded-lg hover:bg-[#0B3D26] transition-colors cursor-pointer"
+            className="px-4 py-2 text-xs font-semibold text-white bg-[var(--brand-primary)] rounded-lg hover:bg-[var(--brand-primary-hover)] transition-colors cursor-pointer"
           >
             Reset Filters
           </button>
@@ -195,15 +190,14 @@ export const ArchiveBrowserView: React.FC<ArchiveBrowserViewProps> = ({
           {visibleItems.map((puzzle) => {
             const isSolved = Boolean(solvedIds[puzzle.id]);
             const isRevealed = Boolean(revealedIds[puzzle.id]);
-            const isBookmarked = Boolean(bookmarkedIds[puzzle.id]);
 
             return (
               <div
                 key={puzzle.id}
-                className={`group bg-white dark:bg-zinc-900 border rounded-xl p-5 flex flex-col justify-between transition-colors ${
+                className={`group bg-[var(--bg-card)] border rounded-xl p-5 flex flex-col justify-between transition-colors ${
                   isSolved
-                    ? 'border-[#0F5132]/35 dark:border-emerald-500/40 bg-[#0F5132]/[0.02] dark:bg-emerald-950/20'
-                    : 'border-stone-200 dark:border-zinc-800 hover:border-stone-300 dark:hover:border-zinc-700'
+                    ? 'border-[var(--brand-soft-border)] bg-[var(--brand-soft-bg)]'
+                    : 'border-[var(--border-card)] hover:border-[var(--brand-soft-border)]'
                 }`}
               >
                 <div className="space-y-2.5">
@@ -216,25 +210,6 @@ export const ArchiveBrowserView: React.FC<ArchiveBrowserViewProps> = ({
                       <span aria-hidden="true">·</span>
                       <span className="truncate">{puzzle.category}</span>
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onToggleBookmark(puzzle.id);
-                      }}
-                      aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark challenge'}
-                      className={`p-1 rounded transition-colors cursor-pointer shrink-0 ${
-                        isBookmarked
-                          ? 'text-amber-600 dark:text-amber-400'
-                          : 'text-stone-400 dark:text-zinc-500 hover:text-stone-700 dark:hover:text-zinc-300'
-                      }`}
-                    >
-                      <Bookmark
-                        className="w-3.5 h-3.5"
-                        fill={isBookmarked ? 'currentColor' : 'none'}
-                      />
-                    </button>
                   </div>
 
                   {/* Card Title: Sequential Rebus Puzzle #1, #2, #3... */}
@@ -251,7 +226,7 @@ export const ArchiveBrowserView: React.FC<ArchiveBrowserViewProps> = ({
 
                   {/* Preview snippet or solved answer */}
                   {isSolved ? (
-                    <div className="pt-1 flex items-center gap-1.5 text-xs font-semibold text-[#0F5132] dark:text-emerald-400">
+                    <div className="pt-1 flex items-center gap-1.5 text-xs font-semibold text-[var(--brand-text)]">
                       <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
                       <span className="truncate">Solved: {puzzle.answer}</span>
                     </div>
@@ -267,7 +242,7 @@ export const ArchiveBrowserView: React.FC<ArchiveBrowserViewProps> = ({
                   )}
                 </div>
 
-                <div className="pt-4 mt-4 border-t border-stone-100 dark:border-zinc-800 flex items-center justify-between">
+                <div className="pt-4 mt-4 border-t border-[var(--border-card)] flex items-center justify-between">
                   <span className="text-xs text-stone-400 dark:text-zinc-500">
                     {puzzle.cropBox
                       ? 'Cropped PDF Card'
@@ -278,7 +253,7 @@ export const ArchiveBrowserView: React.FC<ArchiveBrowserViewProps> = ({
                   <button
                     type="button"
                     onClick={() => onSelectPuzzle(puzzle.id)}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-[#0F5132] dark:text-emerald-400 hover:text-[#0B3D26] dark:hover:text-emerald-300 cursor-pointer whitespace-nowrap shrink-0"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--brand-text)] hover:underline cursor-pointer whitespace-nowrap shrink-0"
                   >
                     <span>{isSolved ? 'Review Challenge' : 'Play Challenge'}</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
@@ -292,7 +267,7 @@ export const ArchiveBrowserView: React.FC<ArchiveBrowserViewProps> = ({
 
       {/* Pagination Footer */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between bg-white dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800 rounded-xl px-5 py-3.5 text-xs text-stone-600 dark:text-zinc-400">
+        <div className="flex items-center justify-between bg-[var(--bg-card)] border border-[var(--border-card)] rounded-xl px-5 py-3.5 text-xs text-stone-600 dark:text-zinc-400">
           <span className="font-mono tabular-nums">
             Page {currentPage} of {totalPages} ({filtered.length} total)
           </span>
@@ -301,7 +276,7 @@ export const ArchiveBrowserView: React.FC<ArchiveBrowserViewProps> = ({
               type="button"
               disabled={currentPage <= 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="px-3 py-1.5 font-medium rounded-lg border border-stone-200 dark:border-zinc-700 disabled:opacity-40 hover:bg-stone-50 dark:hover:bg-zinc-800 cursor-pointer"
+              className="px-3 py-1.5 font-medium rounded-lg border border-[var(--border-card)] disabled:opacity-40 hover:bg-[var(--bg-subtle)] cursor-pointer"
             >
               Previous
             </button>
@@ -309,7 +284,7 @@ export const ArchiveBrowserView: React.FC<ArchiveBrowserViewProps> = ({
               type="button"
               disabled={currentPage >= totalPages}
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              className="px-3 py-1.5 font-medium rounded-lg border border-stone-200 dark:border-zinc-700 disabled:opacity-40 hover:bg-stone-50 dark:hover:bg-zinc-800 cursor-pointer"
+              className="px-3 py-1.5 font-medium rounded-lg border border-[var(--border-card)] disabled:opacity-40 hover:bg-[var(--bg-subtle)] cursor-pointer"
             >
               Next
             </button>

@@ -200,7 +200,7 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
   return (
     <div className="space-y-6">
       {/* Worksheet & Printable PDF Header Panel */}
-      <div className="bg-white dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800 rounded-xl p-5 space-y-4">
+      <div className="bg-[var(--bg-card)] border border-[var(--border-card)] rounded-xl p-5 space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="text-xs text-stone-500 dark:text-zinc-400">
@@ -224,8 +224,8 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
               }}
               className={`inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg border transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                 showPdfVault
-                  ? 'bg-[#0F5132] text-white border-[#0F5132]'
-                  : 'bg-[#FAF9F5] dark:bg-zinc-950 text-stone-800 dark:text-zinc-200 border-stone-300 dark:border-zinc-700 hover:bg-stone-100 dark:hover:bg-zinc-800'
+                  ? 'bg-[var(--brand-primary)] text-white border-[var(--brand-primary)]'
+                  : 'bg-[var(--bg-subtle)] text-stone-800 dark:text-zinc-200 border-[var(--border-card)] hover:opacity-90'
               }`}
             >
               <BookOpen className="w-3.5 h-3.5" />
@@ -240,7 +240,7 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
                 href={pdf.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-[#0F5132] hover:bg-[#0B3D26] rounded-lg transition-colors whitespace-nowrap shrink-0"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] rounded-lg transition-colors whitespace-nowrap shrink-0"
               >
                 <FileDown className="w-3.5 h-3.5" />
                 <span>{pdf.label}</span>
@@ -251,7 +251,7 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
               href={activeSheet.postUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-stone-700 dark:text-zinc-300 bg-stone-100 dark:bg-zinc-800 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-lg transition-colors whitespace-nowrap shrink-0"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-stone-700 dark:text-zinc-300 bg-[var(--bg-subtle)] border border-[var(--border-card)] hover:opacity-90 rounded-lg transition-colors whitespace-nowrap shrink-0"
             >
               <span>Source Article</span>
               <ExternalLink className="w-3.5 h-3.5" />
@@ -260,7 +260,7 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
         </div>
 
         {/* Collection Filter Segmented Row + Worksheet Dropdown */}
-        <div className="pt-3 border-t border-stone-100 dark:border-zinc-800 flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+        <div className="pt-3 border-t border-[var(--border-card)] flex flex-col xl:flex-row xl:items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-1.5">
             {COLLECTION_FILTERS.map((tab) => (
               <button
@@ -279,8 +279,8 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
                 }}
                 className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                   collectionFilter === tab.id
-                    ? 'bg-stone-900 dark:bg-emerald-700 text-white'
-                    : 'bg-stone-100 dark:bg-zinc-800 text-stone-600 dark:text-zinc-300 hover:text-stone-900 dark:hover:text-white'
+                    ? 'bg-[var(--brand-primary)] text-white'
+                    : 'bg-[var(--bg-subtle)] text-stone-600 dark:text-zinc-300 hover:text-stone-900 dark:hover:text-white'
                 }`}
               >
                 {tab.label}
@@ -288,12 +288,12 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
             ))}
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 w-full xl:w-auto">
             <label
               htmlFor="worksheet-select"
-              className="text-xs font-medium text-stone-600 dark:text-zinc-400 whitespace-nowrap"
+              className="text-xs font-medium text-stone-600 dark:text-zinc-400 whitespace-nowrap shrink-0"
             >
-              Active Sheet ({filteredSheets.length}):
+              Sheet ({filteredSheets.length}):
             </label>
             <select
               id="worksheet-select"
@@ -302,7 +302,7 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
                 setSelectedSheetId(e.target.value);
                 setZoomSheet(false);
               }}
-              className="w-full sm:w-auto px-3.5 py-2 text-xs font-medium bg-[#FAF9F5] dark:bg-zinc-950 border border-stone-300 dark:border-zinc-700 rounded-lg text-stone-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-[#0F5132]"
+              className="flex-1 sm:w-auto min-w-0 h-9 px-3 py-1 text-xs font-medium leading-normal bg-[var(--bg-subtle)] border border-[var(--border-card)] rounded-lg text-stone-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
             >
               {filteredSheets.map((sheet) => {
                 const done = sheet.items.filter(
@@ -321,8 +321,8 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
 
       {/* Collapsible Printable PDF Vault (All 36 Just Family Fun PDFs + 500-Puzzle Ebook) */}
       {showPdfVault && (
-        <div className="bg-white dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800 rounded-xl p-5 sm:p-6 space-y-5">
-          <div className="flex items-start justify-between gap-4 border-b border-stone-100 dark:border-zinc-800 pb-4">
+        <div className="bg-[var(--bg-card)] border border-[var(--border-card)] rounded-xl p-5 sm:p-6 space-y-5">
+          <div className="flex items-start justify-between gap-4 border-b border-[var(--border-card)] pb-4">
             <div>
               <div className="text-xs text-stone-500 dark:text-zinc-400">
                 Complete Just Family Fun Printable PDF Index (36 Downloadable PDFs)
@@ -351,7 +351,7 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
                   {group.items.map((pdfItem) => (
                     <div
                       key={pdfItem.url + pdfItem.title}
-                      className="p-3.5 rounded-lg border border-stone-200 dark:border-zinc-800 bg-[#FAF9F5] dark:bg-zinc-950 flex flex-col justify-between gap-3"
+                      className="p-3.5 rounded-lg border border-[var(--border-card)] bg-[var(--bg-subtle)] flex flex-col justify-between gap-3"
                     >
                       <div className="space-y-1">
                         <div className="text-xs font-mono text-stone-500 dark:text-zinc-400">
@@ -370,7 +370,7 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
                               setSelectedSheetId(pdfItem.worksheetId!);
                               setShowPdfVault(false);
                             }}
-                            className="text-xs font-semibold text-[#0F5132] dark:text-emerald-400 hover:underline cursor-pointer whitespace-nowrap"
+                            className="text-xs font-semibold text-[var(--brand-text)] hover:underline cursor-pointer whitespace-nowrap"
                           >
                             Open Interactive Sheet →
                           </button>
@@ -384,7 +384,7 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
                           href={pdfItem.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-stone-800 dark:text-zinc-200 bg-white dark:bg-zinc-900 border border-stone-300 dark:border-zinc-700 hover:bg-stone-100 dark:hover:bg-zinc-800 rounded-md transition-colors whitespace-nowrap shrink-0"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-stone-800 dark:text-zinc-200 bg-[var(--bg-card)] border border-[var(--border-card)] hover:opacity-90 rounded-md transition-colors whitespace-nowrap shrink-0"
                         >
                           <FileDown className="w-3 h-3" />
                           <span>PDF</span>
@@ -402,8 +402,8 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
       {/* Main Split View: Left = Worksheet Image(s), Right = Interactive Numbered Solver */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Zoomable Sheet Graphic */}
-        <div className="lg:col-span-6 lg:sticky lg:top-6 bg-white dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800 rounded-xl overflow-hidden">
-          <div className="px-5 py-3 border-b border-stone-100 dark:border-zinc-800 bg-stone-50 dark:bg-zinc-950 flex items-center justify-between text-xs text-stone-600 dark:text-zinc-400">
+        <div className="lg:col-span-6 lg:sticky lg:top-6 bg-[var(--bg-card)] border border-[var(--border-card)] rounded-xl overflow-hidden">
+          <div className="px-5 py-3 border-b border-[var(--border-card)] bg-[var(--bg-subtle)] flex items-center justify-between text-xs text-stone-600 dark:text-zinc-400">
             <span className="font-mono tabular-nums">
               Progress: {solvedCountForSheet} / {activeSheet.totalCount} Solved ·{' '}
               {activeSheet.imageUrls.length}{' '}
@@ -428,7 +428,7 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
             </button>
           </div>
 
-          <div className="p-4 sm:p-6 max-h-[75vh] overflow-auto flex flex-col items-center gap-4 bg-[#FAF9F5] dark:bg-zinc-950">
+          <div className="p-4 sm:p-6 max-h-[75vh] overflow-auto flex flex-col items-center gap-4 bg-[var(--bg-subtle)]">
             {activeSheet.imageUrls.map((url, idx) => (
               <img
                 key={url}
@@ -436,7 +436,7 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
                 alt={`${activeSheet.title} page ${idx + 1}`}
                 referrerPolicy="no-referrer"
                 onClick={() => setZoomSheet((prev) => !prev)}
-                className={`rounded-lg border border-stone-200 dark:border-zinc-700 bg-white cursor-zoom-in transition-all duration-150 ${
+                className={`rounded-lg border border-[var(--border-card)] bg-white cursor-zoom-in transition-all duration-150 ${
                   zoomSheet ? 'max-w-none w-[140%]' : 'w-full h-auto object-contain'
                 }`}
               />
@@ -458,10 +458,10 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
                 key={key}
                 className={`p-4 rounded-xl border transition-colors ${
                   isSolved
-                    ? 'bg-[#0F5132]/5 dark:bg-emerald-950/25 border-[#0F5132]/30 dark:border-emerald-500/40'
+                    ? 'bg-[var(--brand-soft-bg)] border-[var(--brand-soft-border)]'
                     : isRevealed
                     ? 'bg-amber-50/50 dark:bg-amber-950/25 border-amber-200 dark:border-amber-700/50'
-                    : 'bg-white dark:bg-zinc-900 border-stone-200 dark:border-zinc-800'
+                    : 'bg-[var(--bg-card)] border-[var(--border-card)]'
                 } ${wrongKey === key ? 'animate-shake border-red-400' : ''}`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2.5">
@@ -475,7 +475,7 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
                     {isSolved && (
                       <>
                         <span aria-hidden="true">·</span>
-                        <span className="inline-flex items-center gap-1 text-[#0F5132] dark:text-emerald-400 font-semibold">
+                        <span className="inline-flex items-center gap-1 text-[var(--brand-text)] font-semibold">
                           <CheckCircle2 className="w-3.5 h-3.5" />
                           <span>Solved</span>
                         </span>
@@ -494,7 +494,7 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
                       completionModal.itemIndex === item.index && (
                         <>
                           <span aria-hidden="true">·</span>
-                          <span className="font-mono text-[#0F5132] dark:text-emerald-400 tabular-nums">
+                          <span className="font-mono text-[var(--brand-text)] tabular-nums">
                             Next prompt in {completionModal.secondsLeft}s...
                           </span>
                         </>
@@ -507,7 +507,7 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
                         <button
                           type="button"
                           onClick={() => handleToggleClue(key)}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-stone-700 dark:text-zinc-300 bg-stone-100 dark:bg-zinc-800 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-stone-700 dark:text-zinc-300 bg-[var(--bg-subtle)] border border-[var(--border-card)] hover:opacity-90 rounded-md transition-colors cursor-pointer whitespace-nowrap shrink-0"
                         >
                           <HelpCircle className="w-3 h-3" />
                           <span>{showClue ? 'Clue Active' : 'Hint'}</span>
@@ -544,18 +544,18 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
                       setInputs((prev) => ({ ...prev, [key]: e.target.value }))
                     }
                     placeholder={`Solve Rebus Puzzle #${item.index} (${item.wordPattern.join(', ')} letters)...`}
-                    className={`w-full px-3.5 py-2 text-sm rounded-lg border font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#0F5132] ${
+                    className={`w-full px-3.5 py-2 text-sm rounded-lg border font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)] ${
                       isSolved
-                        ? 'bg-white dark:bg-zinc-950 border-[#0F5132]/30 dark:border-emerald-500/40 text-[#0F5132] dark:text-emerald-400 font-semibold'
+                        ? 'bg-[var(--bg-card)] border-[var(--brand-soft-border)] text-[var(--brand-text)] font-semibold'
                         : isRevealed
-                        ? 'bg-white dark:bg-zinc-950 border-amber-300 dark:border-amber-700 text-amber-900 dark:text-amber-300'
-                        : 'bg-[#FAF9F5] dark:bg-zinc-950 border-stone-300 dark:border-zinc-700 text-stone-900 dark:text-zinc-100'
+                        ? 'bg-[var(--bg-card)] border-amber-300 dark:border-amber-700 text-amber-900 dark:text-amber-300'
+                        : 'bg-[var(--bg-subtle)] border-[var(--border-card)] text-stone-900 dark:text-zinc-100'
                     }`}
                   />
                   {!isSolved && !isRevealed && (
                     <button
                       type="submit"
-                      className="px-4 py-2 text-xs font-semibold text-white bg-[#0F5132] hover:bg-[#0B3D26] rounded-lg transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                      className="px-4 py-2 text-xs font-semibold text-white bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] rounded-lg transition-colors cursor-pointer whitespace-nowrap shrink-0"
                     >
                       Check
                     </button>
@@ -577,7 +577,7 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
 
                 {/* Clue or Explanation Drawer */}
                 {(showClue || isSolved || isRevealed) && (
-                  <div className="mt-2.5 pt-2.5 border-t border-stone-200/70 dark:border-zinc-800 text-xs text-stone-600 dark:text-zinc-400 space-y-1">
+                  <div className="mt-2.5 pt-2.5 border-t border-[var(--border-card)] text-xs text-stone-600 dark:text-zinc-400 space-y-1">
                     {showClue && !isSolved && !isRevealed && (
                       <p>
                         <strong className="text-stone-800 dark:text-zinc-200">Clue:</strong>{' '}
@@ -610,7 +610,7 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
             aria-labelledby="worksheet-next-modal-title"
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/65 backdrop-blur-[2px] transition-opacity duration-150"
           >
-            <div className="w-full max-w-md bg-white dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800 rounded-xl p-6 shadow-xl space-y-5">
+            <div className="w-full max-w-md bg-[var(--bg-card)] border border-[var(--border-card)] rounded-xl p-6 shadow-xl space-y-5">
               <div className="flex items-start justify-between gap-4">
                 <div className="space-y-1">
                   <div className="text-xs text-stone-500 dark:text-zinc-400 font-mono tabular-nums">
@@ -637,11 +637,11 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
                 </button>
               </div>
 
-              <div className="p-4 rounded-xl bg-[#FAF9F5] dark:bg-zinc-950 border border-stone-200/90 dark:border-zinc-800 space-y-2">
+              <div className="p-4 rounded-xl bg-[var(--bg-subtle)] border border-[var(--border-card)] space-y-2">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-stone-500 dark:text-zinc-400">Solution</span>
                   {completionModal.outcome === 'solved' ? (
-                    <span className="font-mono font-semibold text-[#0F5132] dark:text-emerald-400 tabular-nums">
+                    <span className="font-mono font-semibold text-[var(--brand-text)] tabular-nums">
                       +{completionModal.pointsEarned} pts · {solvedCountForSheet}/
                       {activeSheet.totalCount} on Sheet
                     </span>
@@ -665,7 +665,7 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
                   onClick={() =>
                     setCompletionModal((prev) => ({ ...prev, status: 'idle', secondsLeft: 3 }))
                   }
-                  className="px-3.5 py-2.5 text-xs font-medium text-stone-600 dark:text-zinc-300 hover:text-stone-900 dark:hover:text-white bg-stone-100 dark:bg-zinc-800 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-lg transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                  className="px-3.5 py-2.5 text-xs font-medium text-stone-600 dark:text-zinc-300 hover:text-stone-900 dark:hover:text-white bg-[var(--bg-subtle)] border border-[var(--border-card)] rounded-lg transition-colors cursor-pointer whitespace-nowrap shrink-0"
                 >
                   Stay Here
                 </button>
@@ -673,7 +673,7 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
                   type="button"
                   autoFocus
                   onClick={handleJumpToNextUnsolvedItem}
-                  className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 text-xs font-semibold text-white bg-[#0F5132] hover:bg-[#0B3D26] rounded-lg transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                  className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 text-xs font-semibold text-white bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] rounded-lg transition-colors cursor-pointer whitespace-nowrap shrink-0"
                 >
                   <span>
                     {solvedCountForSheet >= activeSheet.totalCount
