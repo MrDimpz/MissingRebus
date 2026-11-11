@@ -35,6 +35,9 @@ import {
   Moon,
   Palette,
   Play,
+  Tv,
+  Maximize2,
+  Minimize2,
 } from 'lucide-react';
 
 type NavTab = 'play' | 'archive' | 'worksheets' | 'rules';
@@ -234,6 +237,9 @@ export default function App() {
   const [introVideoFinished, setIntroVideoFinished] = useState<boolean>(false);
   const [introMuted, setIntroMuted] = useState<boolean>(true);
   const introVideoRef = useRef<HTMLVideoElement>(null);
+
+  // Stream Mode state (full screen puzzle + answer entry box)
+  const [streamMode, setStreamMode] = useState<boolean>(false);
 
   // Auto-trigger 12-second timer when intro screen is shown
   useEffect(() => {
@@ -514,14 +520,14 @@ export default function App() {
     const showFull = isSolved || isRevealed;
 
     return (
-      <div className="flex flex-wrap items-center justify-center gap-x-3 sm:gap-x-4 gap-y-2 py-2.5 px-2.5 sm:px-3 bg-[var(--bg-subtle)] rounded-xl border border-[var(--border-card)]">
+      <div className="flex flex-wrap items-center justify-center gap-x-3 sm:gap-x-4 gap-y-2 py-3 px-3 sm:px-4 bg-[var(--bg-subtle)] rounded-xl border-2 border-[var(--border-card)] shadow-2xs">
         {words.map((word, wIdx) => (
-          <div key={wIdx} className="flex items-center gap-1 flex-wrap justify-center">
+          <div key={wIdx} className="flex items-center gap-1 sm:gap-1.5 flex-wrap justify-center">
             {word.split('').map((char, cIdx) => {
               const isAlphaNum = /[a-zA-Z0-9]/.test(char);
               if (!isAlphaNum) {
                 return (
-                  <span key={cIdx} className="font-mono text-xs sm:text-sm font-bold text-stone-400 px-0.5">
+                  <span key={cIdx} className="font-mono text-sm sm:text-base font-black text-stone-800 dark:text-amber-300 px-0.5">
                     {char}
                   </span>
                 );
@@ -533,10 +539,10 @@ export default function App() {
               return (
                 <span
                   key={cIdx}
-                  className={`w-5 h-6 sm:w-7 sm:h-8 rounded flex items-center justify-center font-mono text-xs sm:text-sm font-bold transition-all ${
+                  className={`w-6 h-7 sm:w-8 sm:h-9 rounded-lg flex items-center justify-center font-mono text-xs sm:text-base font-black transition-all ${
                     shouldRevealChar
-                      ? 'bg-[var(--brand-soft-bg)] text-[var(--brand-text)] border border-[var(--brand-soft-border)] shadow-2xs'
-                      : 'bg-[var(--bg-card)] text-stone-300 dark:text-stone-600 border border-[var(--border-card)]'
+                      ? 'bg-[var(--brand-primary)] text-amber-300 dark:bg-amber-400 dark:text-[#11081A] border-2 border-[var(--brand-gold)] dark:border-amber-200 shadow-md scale-105'
+                      : 'bg-[var(--bg-card)] text-stone-900 dark:text-amber-300 border-2 border-stone-400 dark:border-amber-400/80 shadow-2xs'
                   }`}
                 >
                   {shouldRevealChar ? char.toUpperCase() : '_'}
@@ -718,6 +724,20 @@ export default function App() {
                 />
               </div>
 
+              {/* Stream Mode Toggle Button */}
+              <button
+                onClick={() => setStreamMode((prev) => !prev)}
+                title={streamMode ? 'Exit Stream Mode' : 'Enter Stream Mode (Full Screen Focused View)'}
+                className={`flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-full border text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
+                  streamMode
+                    ? 'bg-purple-800 text-amber-300 border-amber-400 shadow-md ring-2 ring-amber-400/50'
+                    : 'bg-[var(--bg-subtle)] border-[var(--border-card)] text-stone-800 dark:text-stone-200 hover:border-[var(--brand-accent)]'
+                }`}
+              >
+                <Tv className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 shrink-0" />
+                <span className="hidden sm:inline">Stream Mode</span>
+              </button>
+
               {sprintActive ? (
                 <button
                   onClick={handleExitSprint}
@@ -800,7 +820,7 @@ export default function App() {
       <main className="relative z-10 flex-1 max-w-6xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-8">
         {/* VIEW 1: PLAY MODE */}
         {activeTab === 'play' && (
-          <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
+          <div className="max-w-4xl lg:max-w-5xl mx-auto space-y-4 sm:space-y-6">
             {/* Sprint Mode Banner or Summary */}
             {sprintActive && (
               <div className="bg-amber-50/90 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 rounded-2xl p-3.5 sm:p-4 flex flex-wrap items-center justify-between gap-3">
@@ -1494,6 +1514,134 @@ export default function App() {
                 </button>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Stream Mode Full-Screen View */}
+      {streamMode && (
+        <div className="fixed inset-0 z-50 bg-[var(--bg-canvas)] flex flex-col justify-between p-3 sm:p-6 overflow-y-auto animate-in fade-in duration-200">
+          {/* Stream Mode Top Bar */}
+          <div className="w-full max-w-5xl mx-auto flex items-center justify-between gap-3 bg-[var(--bg-card)] border-2 border-[var(--border-card)] rounded-2xl px-4 py-3 shadow-md shrink-0">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <span className="px-2.5 py-1 rounded-lg bg-[var(--brand-primary)] text-white text-xs font-mono font-bold tracking-wider uppercase shrink-0">
+                STREAM MODE
+              </span>
+              <h2 className="font-serif text-sm sm:text-lg font-bold text-stone-900 dark:text-stone-100 truncate">
+                {currentPuzzle.title}
+              </h2>
+            </div>
+
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+              <button
+                onClick={handlePrevPuzzle}
+                className="px-2.5 py-1.5 rounded-lg bg-[var(--bg-subtle)] text-stone-800 dark:text-stone-200 text-xs font-semibold border border-[var(--border-card)] flex items-center gap-1 hover:opacity-85 cursor-pointer"
+                title="Previous Puzzle"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+                <span className="hidden xs:inline">Prev</span>
+              </button>
+              <button
+                onClick={handleRandomUnsolved}
+                className="px-2.5 py-1.5 rounded-lg bg-[var(--bg-subtle)] text-stone-800 dark:text-stone-200 text-xs font-semibold border border-[var(--border-card)] flex items-center gap-1 hover:opacity-85 cursor-pointer"
+                title="Random Unsolved Puzzle"
+              >
+                <Shuffle className="w-3.5 h-3.5" />
+                <span className="hidden xs:inline">Random</span>
+              </button>
+              <button
+                onClick={handleNextPuzzle}
+                className="px-2.5 py-1.5 rounded-lg bg-[var(--bg-subtle)] text-stone-800 dark:text-stone-200 text-xs font-semibold border border-[var(--border-card)] flex items-center gap-1 hover:opacity-85 cursor-pointer"
+                title="Next Puzzle"
+              >
+                <span className="hidden xs:inline">Next</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => setStreamMode(false)}
+                className="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold flex items-center gap-1 shadow-sm transition-colors cursor-pointer"
+                title="Exit Stream Mode"
+              >
+                <Minimize2 className="w-3.5 h-3.5" />
+                <span>Exit Stream</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Stream Center Area: Fill-Screen Rebus Visual Stage */}
+          <div className="w-full max-w-5xl mx-auto flex-1 flex flex-col items-center justify-center my-1.5 sm:my-2">
+            <div className="w-full h-full flex flex-col justify-center">
+              <RebusVisualStage puzzle={currentPuzzle} isSolved={isSolved} hideFooter={true} isStreamMode={true} />
+            </div>
+          </div>
+
+          {/* Stream Bottom Area: Letter Slots & Answer Entry Form */}
+          <div className="w-full max-w-4xl mx-auto bg-[var(--bg-card)] border-2 border-[var(--border-card)] rounded-2xl p-3.5 sm:p-5 shadow-lg space-y-3 shrink-0 mt-1 sm:mt-1.5">
+            {renderLetterSlots()}
+
+            {/* Answer Form */}
+            <form onSubmit={handleGuessSubmit} className="flex flex-col sm:flex-row gap-2.5">
+              <input
+                ref={inputRef}
+                type="text"
+                value={guessInput}
+                onChange={(e) => {
+                  setGuessInput(e.target.value);
+                  if (feedbackStatus === 'wrong' || feedbackStatus === 'almost') {
+                    setFeedbackStatus('idle');
+                  }
+                }}
+                disabled={isSolved || isRevealed}
+                placeholder={
+                  isSolved || isRevealed
+                    ? currentPuzzle.answer
+                    : 'Type your decoded phrase or word...'
+                }
+                className={`flex-1 px-4 py-3.5 rounded-xl text-base sm:text-lg font-bold transition-all focus:outline-none ${
+                  feedbackStatus === 'correct'
+                    ? 'bg-[var(--brand-soft-bg)] border-2 border-[var(--brand-primary)] text-[var(--brand-text)]'
+                    : feedbackStatus === 'wrong'
+                    ? 'bg-red-50/60 dark:bg-red-950/30 border-2 border-red-600 text-stone-900 dark:text-stone-100'
+                    : 'bg-[var(--bg-subtle)] border-2 border-[var(--border-card)] text-stone-900 dark:text-stone-100 focus:border-[var(--brand-accent)]'
+                }`}
+              />
+
+              {!isSolved && !isRevealed ? (
+                <button
+                  type="submit"
+                  className="px-6 py-3.5 rounded-xl bg-[var(--brand-primary)] text-white font-bold text-base hover:bg-[var(--brand-primary-hover)] transition-colors shadow-md cursor-pointer shrink-0"
+                >
+                  Check Answer
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleNextPuzzle}
+                  className="px-6 py-3.5 rounded-xl bg-[var(--brand-primary)] text-white font-bold text-base hover:bg-[var(--brand-primary-hover)] transition-colors flex items-center justify-center gap-2 shadow-md cursor-pointer shrink-0"
+                >
+                  <span>Next Rebus</span>
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              )}
+            </form>
+
+            {/* Feedback Message in Stream Mode */}
+            {feedbackStatus !== 'idle' && (
+              <div
+                className={`p-3.5 rounded-xl border text-sm font-bold flex items-center justify-between gap-2 ${
+                  feedbackStatus === 'correct'
+                    ? 'bg-[var(--brand-soft-bg)] border-[var(--brand-soft-border)] text-stone-900 dark:text-stone-100'
+                    : 'bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-800 text-red-900 dark:text-red-200'
+                }`}
+              >
+                <span>{feedbackMessage}</span>
+                {(isSolved || isRevealed) && (
+                  <span className="font-mono text-xs uppercase px-2 py-1 rounded bg-[var(--bg-card)] border border-[var(--border-card)] font-bold">
+                    {currentPuzzle.answer}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}

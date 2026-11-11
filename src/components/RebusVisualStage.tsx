@@ -14,9 +14,16 @@ import { RebusChallenge } from '../data/rebusData';
 interface RebusVisualStageProps {
   puzzle: RebusChallenge;
   isSolved: boolean;
+  hideFooter?: boolean;
+  isStreamMode?: boolean;
 }
 
-export const RebusVisualStage: React.FC<RebusVisualStageProps> = ({ puzzle, isSolved }) => {
+export const RebusVisualStage: React.FC<RebusVisualStageProps> = ({
+  puzzle,
+  isSolved,
+  hideFooter = false,
+  isStreamMode = false,
+}) => {
   const [imageError, setImageError] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
   const [showTextBlueprint, setShowTextBlueprint] = useState(false);
@@ -136,17 +143,21 @@ export const RebusVisualStage: React.FC<RebusVisualStageProps> = ({ puzzle, isSo
       </div>
 
       {/* Main Visual Canvas */}
-      <div className="relative flex flex-col items-center justify-center p-3 sm:p-6 bg-[var(--bg-card)] transition-all duration-150">
+      <div className={`relative flex flex-col items-center justify-center bg-[var(--bg-card)] transition-all duration-150 w-full ${
+        isStreamMode ? 'py-[3px] px-2 sm:px-4 min-h-[380px] sm:min-h-[480px] flex-1 h-full' : 'p-3 sm:p-5 min-h-[320px] sm:min-h-[420px]'
+      }`}>
         {puzzle.imageUrl && !imageError && !showTextBlueprint ? (
-          <div className="relative w-full flex flex-col items-center justify-center">
+          <div className="relative w-full h-full flex flex-col items-center justify-center flex-1">
             {puzzle.cropBox && !showFullSheet ? (
               /* Isolated Single-Puzzle Card Crop from PDF Sheet */
               <div
                 onClick={() => setIsZoomed((prev) => !prev)}
-                className={`relative overflow-hidden rounded-xl border border-[var(--border-card)] bg-[var(--bg-card)] shadow-xs cursor-zoom-in transition-all duration-150 ${
-                  isZoomed
-                    ? 'w-72 h-72 sm:w-[380px] sm:h-[380px]'
-                    : 'w-60 h-60 sm:w-72 sm:h-72'
+                className={`relative overflow-hidden rounded-xl border border-[var(--border-card)] bg-[var(--bg-card)] shadow-xs cursor-zoom-in transition-all duration-150 my-[3px] ${
+                  isStreamMode
+                    ? 'w-full max-w-[620px] aspect-square max-h-[64vh] sm:max-h-[74vh] md:max-h-[80vh]'
+                    : isZoomed
+                    ? 'w-full max-w-[560px] aspect-square'
+                    : 'w-full max-w-[460px] aspect-square'
                 }`}
               >
                 <img
@@ -174,10 +185,12 @@ export const RebusVisualStage: React.FC<RebusVisualStageProps> = ({ puzzle, isSo
                 referrerPolicy="no-referrer"
                 onError={() => setImageError(true)}
                 onClick={() => setIsZoomed((prev) => !prev)}
-                className={`object-contain rounded-lg bg-[var(--bg-card)] p-1 select-none cursor-zoom-in transition-transform duration-150 max-w-full ${
-                  isZoomed
-                    ? 'max-h-[480px] w-auto'
-                    : 'max-h-[240px] sm:max-h-[320px] w-auto'
+                className={`object-contain rounded-lg bg-[var(--bg-card)] select-none cursor-zoom-in transition-transform duration-150 w-full ${
+                  isStreamMode
+                    ? 'my-[3px] max-h-[64vh] sm:max-h-[74vh] md:max-h-[82vh] h-full'
+                    : isZoomed
+                    ? 'p-1 max-h-[560px] sm:max-h-[640px] h-full'
+                    : 'p-1 max-h-[360px] sm:max-h-[480px] h-full'
                 }`}
               />
             )}
@@ -225,20 +238,22 @@ export const RebusVisualStage: React.FC<RebusVisualStageProps> = ({ puzzle, isSo
       </div>
 
       {/* Prompt / Letter Count Footer Bar */}
-      <div className="px-3.5 sm:px-5 py-2.5 sm:py-3 bg-[var(--bg-subtle)] border-t border-[var(--border-card)] flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2">
-        <p className="text-xs sm:text-sm text-stone-900 dark:text-stone-100 font-bold leading-snug">
-          {puzzle.prompt}
-        </p>
-        <div className="flex items-center gap-2 text-xs font-mono font-semibold text-stone-700 dark:text-stone-300 shrink-0 tabular-nums">
-          <span>Word Lengths: ({puzzle.wordPattern.join(', ')})</span>
-          {isSolved && (
-            <>
-              <span aria-hidden="true">·</span>
-              <span className="text-[var(--brand-text)] font-semibold">SOLVED</span>
-            </>
-          )}
+      {!hideFooter && (
+        <div className="px-3.5 sm:px-5 py-2.5 sm:py-3 bg-[var(--bg-subtle)] border-t border-[var(--border-card)] flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2">
+          <p className="text-xs sm:text-sm text-stone-900 dark:text-stone-100 font-bold leading-snug">
+            {puzzle.prompt}
+          </p>
+          <div className="flex items-center gap-2 text-xs font-mono font-semibold text-stone-700 dark:text-stone-300 shrink-0 tabular-nums">
+            <span>Word Lengths: ({puzzle.wordPattern.join(', ')})</span>
+            {isSolved && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span className="text-[var(--brand-text)] font-semibold">SOLVED</span>
+              </>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
