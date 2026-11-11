@@ -1521,8 +1521,18 @@ export default function App() {
       {/* Stream Mode Full-Screen View */}
       {streamMode && (
         <div className="fixed inset-0 z-50 bg-[var(--bg-canvas)] flex flex-col justify-between p-3 sm:p-6 overflow-y-auto animate-in fade-in duration-200">
+          {/* Tiled Logo Overlay at 25% opacity for all blank spaces in Stream Mode */}
+          <div
+            className="fixed inset-0 pointer-events-none z-0 opacity-25"
+            style={{
+              backgroundImage: "url('/assets/aistudio/3d_logo_944e5372.png')",
+              backgroundRepeat: 'repeat',
+              backgroundSize: '84px 84px',
+            }}
+          />
+
           {/* Stream Mode Top Bar */}
-          <div className="w-full max-w-5xl mx-auto flex items-center justify-between gap-3 bg-[var(--bg-card)] border-2 border-[var(--border-card)] rounded-2xl px-4 py-3 shadow-md shrink-0">
+          <div className="relative z-10 w-full max-w-5xl mx-auto flex items-center justify-between gap-3 bg-[var(--bg-card)] border-2 border-[var(--border-card)] rounded-2xl px-4 py-3 shadow-md shrink-0">
             <div className="flex items-center gap-2.5 min-w-0">
               <span className="px-2.5 py-1 rounded-lg bg-[var(--brand-primary)] text-white text-xs font-mono font-bold tracking-wider uppercase shrink-0">
                 STREAM MODE
@@ -1569,14 +1579,14 @@ export default function App() {
           </div>
 
           {/* Stream Center Area: Fill-Screen Rebus Visual Stage */}
-          <div className="w-full max-w-5xl mx-auto flex-1 flex flex-col items-center justify-center my-1.5 sm:my-2">
+          <div className="relative z-10 w-full max-w-5xl mx-auto flex-1 flex flex-col items-center justify-center my-1.5 sm:my-2">
             <div className="w-full h-full flex flex-col justify-center">
               <RebusVisualStage puzzle={currentPuzzle} isSolved={isSolved} hideFooter={true} isStreamMode={true} />
             </div>
           </div>
 
           {/* Stream Bottom Area: Letter Slots & Answer Entry Form */}
-          <div className="w-full max-w-4xl mx-auto bg-[var(--bg-card)] border-2 border-[var(--border-card)] rounded-2xl p-3.5 sm:p-5 shadow-lg space-y-3 shrink-0 mt-1 sm:mt-1.5">
+          <div className="relative z-10 w-full max-w-4xl mx-auto bg-[var(--bg-card)] border-2 border-[var(--border-card)] rounded-2xl p-3.5 sm:p-5 shadow-lg space-y-3 shrink-0 mt-1 sm:mt-1.5">
             {renderLetterSlots()}
 
             {/* Answer Form */}
