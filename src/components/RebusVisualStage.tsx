@@ -143,7 +143,7 @@ export const RebusVisualStage: React.FC<RebusVisualStageProps> = ({ puzzle, isSo
               /* Isolated Single-Puzzle Card Crop from PDF Sheet */
               <div
                 onClick={() => setIsZoomed((prev) => !prev)}
-                className={`relative overflow-hidden rounded-xl border border-[var(--border-card)] bg-white shadow-xs cursor-zoom-in transition-all duration-150 ${
+                className={`relative overflow-hidden rounded-xl border border-[var(--border-card)] bg-[var(--bg-card)] shadow-xs cursor-zoom-in transition-all duration-150 ${
                   isZoomed
                     ? 'w-72 h-72 sm:w-[380px] sm:h-[380px]'
                     : 'w-60 h-60 sm:w-72 sm:h-72'
@@ -174,7 +174,7 @@ export const RebusVisualStage: React.FC<RebusVisualStageProps> = ({ puzzle, isSo
                 referrerPolicy="no-referrer"
                 onError={() => setImageError(true)}
                 onClick={() => setIsZoomed((prev) => !prev)}
-                className={`object-contain rounded-lg bg-white p-1 select-none cursor-zoom-in transition-transform duration-150 max-w-full ${
+                className={`object-contain rounded-lg bg-[var(--bg-card)] p-1 select-none cursor-zoom-in transition-transform duration-150 max-w-full ${
                   isZoomed
                     ? 'max-h-[480px] w-auto'
                     : 'max-h-[240px] sm:max-h-[320px] w-auto'
@@ -226,10 +226,10 @@ export const RebusVisualStage: React.FC<RebusVisualStageProps> = ({ puzzle, isSo
 
       {/* Prompt / Letter Count Footer Bar */}
       <div className="px-3.5 sm:px-5 py-2.5 sm:py-3 bg-[var(--bg-subtle)] border-t border-[var(--border-card)] flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2">
-        <p className="text-xs sm:text-sm text-stone-700 dark:text-zinc-300 leading-snug">
+        <p className="text-xs sm:text-sm text-stone-900 dark:text-stone-100 font-bold leading-snug">
           {puzzle.prompt}
         </p>
-        <div className="flex items-center gap-2 text-xs font-mono text-stone-600 dark:text-zinc-400 shrink-0 tabular-nums">
+        <div className="flex items-center gap-2 text-xs font-mono font-semibold text-stone-700 dark:text-stone-300 shrink-0 tabular-nums">
           <span>Word Lengths: ({puzzle.wordPattern.join(', ')})</span>
           {isSolved && (
             <>

@@ -436,7 +436,7 @@ export const WorksheetSolverView: React.FC<WorksheetSolverViewProps> = ({
                 alt={`${activeSheet.title} page ${idx + 1}`}
                 referrerPolicy="no-referrer"
                 onClick={() => setZoomSheet((prev) => !prev)}
-                className={`rounded-lg border border-[var(--border-card)] bg-white cursor-zoom-in transition-all duration-150 ${
+                className={`rounded-lg border border-[var(--border-card)] bg-[var(--bg-card)] cursor-zoom-in transition-all duration-150 ${
                   zoomSheet ? 'max-w-none w-[140%]' : 'w-full h-auto object-contain'
                 }`}
               />

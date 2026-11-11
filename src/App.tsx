@@ -34,6 +34,7 @@ import {
   Sun,
   Moon,
   Palette,
+  Play,
 } from 'lucide-react';
 
 type NavTab = 'play' | 'archive' | 'worksheets' | 'rules';
@@ -227,6 +228,28 @@ export default function App() {
   const [sprintFinished, setSprintFinished] = useState<boolean>(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Intro Video Screen state
+  const [showIntroScreen, setShowIntroScreen] = useState<boolean>(true);
+  const [introVideoFinished, setIntroVideoFinished] = useState<boolean>(false);
+  const [introMuted, setIntroMuted] = useState<boolean>(true);
+  const introVideoRef = useRef<HTMLVideoElement>(null);
+
+  // Auto-trigger 12-second timer when intro screen is shown
+  useEffect(() => {
+    if (!showIntroScreen) return;
+    setIntroVideoFinished(false);
+    const timer = setTimeout(() => {
+      setIntroVideoFinished(true);
+    }, 12000);
+    return () => clearTimeout(timer);
+  }, [showIntroScreen]);
+
+  useEffect(() => {
+    if (introVideoRef.current) {
+      introVideoRef.current.muted = introMuted;
+    }
+  }, [introMuted]);
 
   // Save progress to localStorage
   useEffect(() => {
@@ -774,7 +797,7 @@ export default function App() {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-8">
+      <main className="relative z-10 flex-1 max-w-6xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-8">
         {/* VIEW 1: PLAY MODE */}
         {activeTab === 'play' && (
           <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6">
@@ -987,9 +1010,9 @@ export default function App() {
                 <div className="bg-[var(--bg-card)] border border-[var(--border-card)] rounded-2xl p-3.5 sm:p-6 shadow-xs space-y-4 sm:space-y-5 transition-colors">
                   {/* Word & Letter Pattern Bar */}
                   <div className="space-y-2">
-                    <div className="flex flex-wrap items-center justify-between gap-1 text-xs text-stone-500 dark:text-stone-400">
-                      <span>{currentPuzzle.prompt}</span>
-                      <span className="font-mono text-[11px]">
+                    <div className="flex flex-wrap items-center justify-between gap-1 text-xs sm:text-sm">
+                      <span className="font-bold text-stone-900 dark:text-stone-100">{currentPuzzle.prompt}</span>
+                      <span className="font-mono text-xs font-semibold text-stone-700 dark:text-stone-300">
                         Lengths: ({currentPuzzle.answer.split(' ').map((w) => w.length).join(', ')})
                       </span>
                     </div>
@@ -1082,10 +1105,10 @@ export default function App() {
                   {/* 4-Tier Progressive Hint System + Reveal Action */}
                   <div className="pt-3 border-t border-[var(--border-card)] space-y-3">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div className="flex items-center gap-1.5 text-xs font-semibold text-stone-700 dark:text-stone-300">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-stone-900 dark:text-stone-100">
                         <Lightbulb className="w-4 h-4 text-amber-500 shrink-0" />
                         <span>Progressive Hint System</span>
-                        <span className="text-stone-400 dark:text-stone-500 font-normal">
+                        <span className="text-stone-600 dark:text-stone-400 font-semibold">
                           ({hintsUnlocked}/4 unlocked · -15 pts each)
                         </span>
                       </div>
@@ -1094,10 +1117,10 @@ export default function App() {
                         <button
                           type="button"
                           onClick={handleRevealAnswer}
-                          className={`text-xs font-medium px-2.5 py-1 rounded-lg border transition-colors flex items-center gap-1 ${
+                          className={`text-xs font-bold px-2.5 py-1 rounded-lg border transition-colors flex items-center gap-1 ${
                             confirmReveal
                               ? 'bg-red-600 text-white border-red-600'
-                              : 'bg-[var(--bg-subtle)] text-stone-600 dark:text-stone-300 border-[var(--border-card)] hover:opacity-85'
+                              : 'bg-[var(--bg-subtle)] text-stone-800 dark:text-stone-200 border-[var(--border-card)] hover:opacity-85'
                           }`}
                         >
                           <Eye className="w-3.5 h-3.5" />
@@ -1115,34 +1138,34 @@ export default function App() {
                         return (
                           <div
                             key={tier.tier}
-                            className={`p-3 rounded-xl border text-left transition-all ${
+                            className={`p-3.5 rounded-xl border text-left transition-all ${
                               isUnlocked
-                                ? 'bg-amber-50/50 dark:bg-amber-950/25 border-amber-200/80 dark:border-amber-800/70 text-stone-800 dark:text-stone-200'
+                                ? 'bg-amber-100/90 dark:bg-amber-950/70 border-amber-300 dark:border-amber-700 text-stone-950 dark:text-stone-100 shadow-2xs'
                                 : isNextToUnlock
-                                ? 'bg-[var(--bg-card)] border-[var(--border-card)] hover:border-amber-400 cursor-pointer'
-                                : 'bg-[var(--bg-subtle)] border-[var(--border-card)] opacity-60'
+                                ? 'bg-[var(--bg-subtle)] border-amber-400/80 hover:border-amber-500 cursor-pointer text-stone-900 dark:text-stone-100'
+                                : 'bg-[var(--bg-subtle)] border-[var(--border-card)] opacity-75 text-stone-700 dark:text-stone-300'
                             }`}
                             onClick={() => {
                               if (isNextToUnlock) handleUnlockHint(tier.tier);
                             }}
                           >
-                            <div className="flex items-center justify-between gap-2 mb-1">
-                              <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-amber-800 dark:text-amber-400">
+                            <div className="flex items-center justify-between gap-2 mb-1.5">
+                              <span className="font-mono text-xs font-bold uppercase tracking-wider text-amber-950 dark:text-amber-300">
                                 Hint {tier.tier}: {tier.label}
                               </span>
                               {!isUnlocked && (
-                                <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-[var(--bg-subtle)] text-stone-600 dark:text-stone-400">
+                                <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-amber-200/90 dark:bg-amber-900/60 text-amber-950 dark:text-amber-200 border border-amber-300 dark:border-amber-700">
                                   {isNextToUnlock ? 'Tap to Unlock (-15 pts)' : 'Locked'}
                                 </span>
                               )}
                             </div>
 
                             {isUnlocked ? (
-                              <p className="text-xs text-stone-700 dark:text-stone-300 leading-relaxed font-medium">
+                              <p className="text-xs sm:text-sm text-stone-950 dark:text-stone-100 leading-relaxed font-semibold">
                                 {tier.content}
                               </p>
                             ) : (
-                              <p className="text-xs text-stone-400 dark:text-stone-500 italic">
+                              <p className="text-xs text-stone-700 dark:text-stone-300 font-medium italic">
                                 {isNextToUnlock
                                   ? 'Click to reveal this clue tier...'
                                   : `Unlock Hint ${tier.tier - 1} first`}
@@ -1192,16 +1215,25 @@ export default function App() {
                 <h2 className="font-serif text-xl font-bold text-stone-900 dark:text-stone-100">
                   Your Rebus Record
                 </h2>
-                <button
-                  onClick={() => {
-                    localStorage.removeItem(STORAGE_KEY);
-                    setProgress(INITIAL_PROGRESS);
-                  }}
-                  className="text-xs text-stone-500 dark:text-stone-400 hover:text-red-600 flex items-center gap-1 transition-colors"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Reset Progress</span>
-                </button>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setShowIntroScreen(true)}
+                    className="text-xs text-[var(--brand-text)] font-bold hover:underline flex items-center gap-1 transition-colors cursor-pointer"
+                  >
+                    <Play className="w-3.5 h-3.5" />
+                    <span>Replay Intro Video</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem(STORAGE_KEY);
+                      setProgress(INITIAL_PROGRESS);
+                    }}
+                    className="text-xs text-stone-500 dark:text-stone-400 hover:text-red-600 flex items-center gap-1 transition-colors cursor-pointer"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Reset Progress</span>
+                  </button>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -1376,6 +1408,91 @@ export default function App() {
               >
                 Stay Here
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* App Load Intro Video Screen */}
+      {showIntroScreen && (
+        <div className="fixed inset-0 z-50 bg-stone-950/95 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-300">
+          <div className="relative max-w-3xl w-full bg-stone-900 border-2 border-purple-500/40 rounded-3xl overflow-hidden shadow-2xl flex flex-col items-center">
+            {/* Header Bar */}
+            <div className="w-full bg-stone-950/90 px-4 py-3 border-b border-purple-900/50 flex items-center justify-between">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <img
+                  src="/assets/aistudio/3d_logo_944e5372.png"
+                  alt="The Missing Piece Logo"
+                  className="w-7 h-7 rounded-full object-contain shrink-0"
+                />
+                <span className="font-serif text-sm sm:text-base font-bold text-amber-300 truncate">
+                  The Missing Piece · Rebus Challenge
+                </span>
+              </div>
+              <button
+                onClick={() => setShowIntroScreen(false)}
+                className="text-xs font-semibold text-stone-400 hover:text-white px-2.5 py-1 rounded-lg bg-stone-800/80 hover:bg-stone-800 border border-stone-700 transition-colors shrink-0 cursor-pointer"
+              >
+                Skip Intro
+              </button>
+            </div>
+
+            {/* Video Box */}
+            <div className="relative w-full aspect-video bg-black flex items-center justify-center overflow-hidden">
+              <video
+                ref={introVideoRef}
+                src="/assets/aistudio/gemini_generated_video_cbfa0c87_3880c18e.mp4"
+                autoPlay
+                playsInline
+                muted={introMuted}
+                onEnded={() => setIntroVideoFinished(true)}
+                onTimeUpdate={(e) => {
+                  if (e.currentTarget.currentTime >= 12) {
+                    setIntroVideoFinished(true);
+                  }
+                }}
+                className="w-full h-full object-cover"
+              />
+
+              {/* Mute/Unmute Toggle */}
+              <button
+                onClick={() => setIntroMuted((prev) => !prev)}
+                className="absolute top-3 right-3 z-10 p-2 rounded-full bg-stone-900/80 text-amber-300 hover:bg-stone-900 border border-amber-500/40 transition-colors cursor-pointer"
+                title={introMuted ? 'Unmute video sound' : 'Mute video sound'}
+              >
+                {introMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+              </button>
+
+              {/* Start Game CTA Overlay (appears after 11 seconds or when video finishes) */}
+              {introVideoFinished && (
+                <div className="absolute inset-0 bg-stone-950/65 backdrop-blur-xs flex flex-col items-center justify-center p-4 animate-in fade-in zoom-in-95 duration-500 z-20">
+                  <button
+                    onClick={() => setShowIntroScreen(false)}
+                    className="px-8 py-4 sm:px-10 sm:py-5 rounded-2xl bg-gradient-to-r from-purple-800 via-purple-700 to-amber-500 hover:from-purple-700 hover:to-amber-400 text-white font-serif text-xl sm:text-3xl font-bold shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 flex items-center gap-3 border-2 border-amber-300 cursor-pointer"
+                  >
+                    <Play className="w-7 h-7 sm:w-8 sm:h-8 text-amber-300 fill-amber-300 shrink-0" />
+                    <span>Start Game</span>
+                  </button>
+                  <p className="text-amber-200/90 font-medium text-xs sm:text-sm mt-3.5 tracking-wide drop-shadow-md">
+                    Click to open the main rebus puzzle game
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Subtitle / Progress Footer */}
+            <div className="w-full bg-stone-950 px-4 py-2.5 flex items-center justify-between text-xs text-stone-400 border-t border-stone-800">
+              <span className="font-mono text-[11px] text-purple-300">
+                {introVideoFinished ? 'Intro Video Finished' : 'Playing Intro Video (12s)...'}
+              </span>
+              {!introVideoFinished && (
+                <button
+                  onClick={() => setIntroVideoFinished(true)}
+                  className="text-amber-400 hover:text-amber-300 underline font-medium text-[11px] cursor-pointer"
+                >
+                  Show Start Button Now
+                </button>
+              )}
             </div>
           </div>
         </div>
